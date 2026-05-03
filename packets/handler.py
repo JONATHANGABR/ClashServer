@@ -1,51 +1,67 @@
-from packets.packet_ids import ClientPackets, ServerPackets
-from packets.parser import Packet
-import struct
+import sqlite3
+import time
 
-class PacketHandler:
-    def __init__(self, logger, db):
+
+class Database:
+    def __init__(self, db_path: str, logger):
         self.logger = logger
-        self.db = db
+        self.conn   = sqlite3.connect(db_path, check_same_thread=False)
+        self._create_tables()
+        logger.info(f"🗄️  Banco de dados conectado: {db_path}")
 
-    def handle(self, packet: Packet, session) -> list[Packet]:
-        pid = packet.packet_id
-        self.logger.debug(f"[{session.addr}] ← Packet {pid} ({len(packet.payload)}b)")
+    def _create_tables(self):
+        self.conn.executescript("""
+            CREATE TABLE IF NOT EXISTS players (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                account_id  INTEGER UNIQUE,
+                token       TEXT,
+                name        TEXT    DEFAULT 'Player',
+                level       INTEGER DEFAULT 1,
+                trophies    INTEGER DEFAULT 0,
+                gold        INTEGER DEFAULT 999999,
+                gems        INTEGER DEFAULT 999999,
+                elixir      INTEGER DEFAULT 999999,
+                created_at  INTEGER
+            );
 
-        routes = {
-            ClientPackets.CLIENT_HELLO: self.on_hello,
-            ClientPackets.LOGIN:        self.on_login,
-            ClientPackets.KEEP_ALIVE:   self.on_keep_alive,
-            ClientPackets.BATTLE_EVENT: self.on_battle_event,
-        }
+            CREATE TABLE IF NOT EXISTS decks (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                player_id   INTEGER,
+                card_id     INTEGER,
+                slot        INTEGER,
+                level       INTEGER DEFAULT 14,
+                FOREIGN KEY (player_id) REFERENCES players(id)
+            );
 
-        handler = routes.get(pid)
-        if handler:
-            return handler(packet, session)
+            CREATE TABLE IF NOT EXISTS battles (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                player1_id  INTEGER,
+                player2_id  INTEGER,
+                winner_id   INTEGER,
+                started_at  INTEGER,
+                ended_at    INTEGER
+            );
+        """)
+        self.conn.commit()
 
-        self.logger.warning(f"[{session.addr}] Packet {pid} não tratado!")
-        return []
+    def get_or_create_player(self, account_id: int) -> dict:
+        cursor = self.conn.cursor()
 
-    def on_hello(self, packet: Packet, session) -> list[Packet]:
-        self.logger.info(f"[{session.addr}] → CLIENT_HELLO")
-        response = Packet(ServerPackets.SERVER_HELLO, b'\x00' * 8)
-        return [response]
+        cursor.execute(
+            "SELECT * FROM players WHERE account_id = ?",
+            (account_id,)
+        )
+        row = cursor.fetchone()
 
-    def on_login(self, packet: Packet, session) -> list[Packet]:
-        self.logger.info(f"[{session.addr}] → LOGIN")
+        if row:
+            columns = [d[0] for d in cursor.description]
+            return dict(zip(columns, row))
 
-        # Responder com LOGIN_OK + dados do home
-        login_ok   = Packet(ServerPackets.LOGIN_OK, b'\x00' * 4)
-        home_data  = Packet(ServerPackets.OWN_HOME_DATA, self._build_home_data(session))
-        return [login_ok, home_data]
+        cursor.execute(
+            "INSERT INTO players (account_id, name, created_at) VALUES (?, 'Player', ?)",
+            (account_id, int(time.time()))
+        )
+        self.conn.commit()
+        self.logger.info(f"🆕 Novo jogador criado: account_id={account_id}")
 
-    def on_keep_alive(self, packet: Packet, session) -> list[Packet]:
-        return [Packet(ServerPackets.KEEP_ALIVE_OK, b'')]
-
-    def on_battle_event(self, packet: Packet, session) -> list[Packet]:
-        self.logger.info(f"[{session.addr}] → BATTLE_EVENT")
-        # Reenviar evento para o oponente (em batalhas reais)
-        return []
-
-    def _build_home_data(self, session) -> bytes:
-        # TODO: serializar com protobuf ou formato binário do CR
-        return b'\x00' * 32
+        return self.get_or_create_player(account_id)
