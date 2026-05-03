@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+
+# Banco de dados
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos do APK original (não precisa subir)
+*.apk
+*.sc
+cr_extracted/
+
+# Dados sensíveis
+config.json
+
+# Cache de CSV processados (opcional)
+# Se quiser que outros extraiam os próprios CSV, comente as linhas abaixo
+# Assets/Csv/csv_logic/*.csv
+# Assets/Csv/csv_client/*.csv
