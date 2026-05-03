@@ -1,18 +1,26 @@
-import logging, sys
+import logging
+import sys
 from datetime import datetime
+
 
 def setup_logger(name: str, debug: bool = True) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
-    fmt = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S")
+    fmt = logging.Formatter(
+        "[%(asctime)s] [%(levelname)s] %(message)s",
+        datefmt="%H:%M:%S"
+    )
 
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(fmt)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(fmt)
 
-    fh = logging.FileHandler(f"royale_{datetime.now().strftime('%Y%m%d')}.log")
-    fh.setFormatter(fmt)
+    file_handler = logging.FileHandler(
+        f"royale_{datetime.now().strftime('%Y%m%d')}.log"
+    )
+    file_handler.setFormatter(fmt)
 
-    logger.addHandler(ch)
-    logger.addHandler(fh)
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
     return logger
