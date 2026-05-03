@@ -7,5 +7,6 @@
   "debug": true,
   "server_name": "ClashRoyaleServer",
   "db_path": "royale.db",
-  "rc4_key": "fhsd6f86f678086fgfjdfjd789fhjf"
+  "rc4_key": "fhsd6f86f678086fgfjdfjd789fhjf",
+  "client_version": 534
 }
