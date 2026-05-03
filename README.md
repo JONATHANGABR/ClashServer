@@ -1,4 +1,4 @@
-# 🏰 CR-Server — Clash Royale Private Server
+# 🏰 CR-Server — Servidor de Clash Royale 3.2803.3
 
 <div align="center">
 
@@ -55,7 +55,7 @@ O projeto foi criado com o objetivo de ser uma base limpa, organizada e expansí
 
 ### 🚧 Em Desenvolvimento
 - [ ] Batalhas PvP
-- [ ] Batalhas PvE (contra bots)
+- [x] Batalhas PvE (contra bots)
 - [ ] Sistema de clãs completo
 - [ ] Sistema de cartas e baralhos
 - [ ] Loja e baús
