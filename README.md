@@ -1,149 +1,41 @@
-# 🏰 CR-Server — Servidor de Clash Royale 3.2803.3
+# 🏰 Clash Royale Private Server
 
-<div align="center">
+Servidor privado para **Clash Royale versão 3.2803.3** (Março 2022).
 
+## ⚠️ Aviso Legal
 
-[![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
-[![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0-orange)](https://mysql.com)
-[![Stars](https://img.shields.io/github/stars/JONATHANGABR/CR-Server?style=social)](https://github.com/JONATHANGABR/ClashServer/stargazers)
-[![Issues](https://img.shields.io/github/issues/JONATHANGABR/CR-Server)](https://github.com/JONATHANGABR/ClashServer/issues)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/JONATHANGABR/ClashServer/pulls)
+Este projeto é apenas para fins educacionais. Clash Royale e todos os ativos relacionados são propriedade da Supercell.
 
-**Servidor privado open-source de Clash Royale para a versão 3.2803.3**  
-Escrito em C# com .NET 8.0 e banco de dados MySQL
+## 📋 Características
 
-[📦 Instalação](#-instalação) •
-[⚙️ Configuração](#️-configuração) •
-[🚀 Rodando](#-rodando-o-servidor) •
-[📊 Status](#-status-do-projeto) •
-[🤝 Contribuindo](#-contribuindo)
+- ✅ Socket TCP na porta 9339
+- ✅ Criptografia RC4
+- ✅ Sistema de autenticação (CLIENT_HELLO + LOGIN)
+- ✅ DNS falso (redireciona game.clashroyaleapp.com)
+- ✅ Carregamento de CSV do jogo (cartas, arenas, etc.)
+- ⏳ Sistema de batalha (em desenvolvimento)
+- ⏳ Matchmaking 1v1/2v2 (planejado)
 
-</div>
+## 🚀 Instalação
 
----
+### Requisitos
 
-## 📌 Sobre o Projeto
+- Python 3.10+
+- Acesso root (para porta 53 do DNS)
 
-O **CR-Server** é um servidor privado open-source para o jogo **Clash Royale**, desenvolvido do zero em **C# (.NET 8.0)** com suporte a banco de dados **MySQL**.
-
-O projeto foi criado com o objetivo de ser uma base limpa, organizada e expansível para estudo de:
-
-- 📡 Protocolos de rede TCP/UDP
-- 🔬 Engenharia reversa de aplicações mobile
-- 💾 Gerenciamento de banco de dados MySQL
-- 🏗️ Arquitetura de servidores de jogos
-
-> ⚠️ **Aviso Legal:** Este projeto é exclusivamente para fins **educacionais**.  
-> Criar servidores privados viola os [Termos de Serviço da Supercell](https://supercell.com/en/terms-of-service/).  
-> Não somos afiliados, endossados ou patrocinados pela Supercell.
-
----
-
-## ✨ Features
-
-### ✅ Implementado
-- [x] Sistema de rede TCP (aceitar múltiplos clientes)
-- [x] Decodificação do protocolo Piranha (header + payload)
-- [x] Sistema de login e autenticação
-- [x] Criação automática de conta nova
-- [x] KeepAlive (conexão estável com o cliente)
-- [x] Banco de dados MySQL integrado
-- [x] Sistema de logs (console + arquivo)
-- [x] Suporte a Docker
-- [x] Configuração via `config.json`
-
-### 🚧 Em Desenvolvimento
-- [ ] Batalhas PvP
-- [x] Batalhas PvE (contra bots)
-- [ ] Sistema de clãs completo
-- [ ] Sistema de cartas e baralhos
-- [ ] Loja e baús
-- [ ] Chat global e de clã
-- [ ] Torneios e desafios
-- [ ] Painel de administração web
-
----
-
-## 🛠️ Tecnologias
-
-| Tecnologia | Versão | Uso |
-|---|---|---|
-| **C#** | .NET 8.0 | Linguagem principal |
-| **MySQL** | 8.0+ | Banco de dados |
-| **Serilog** | 3.x | Sistema de logs |
-| **MySqlConnector** | 2.x | Conexão MySQL |
-| **Newtonsoft.Json** | 13.x | Leitura de configs |
-| **Docker** | Latest | Containerização |
-
----
-
-## 📋 Pré-requisitos
-
-Antes de começar, certifique-se de ter instalado:
-
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [MySQL 8.0+](https://dev.mysql.com/downloads/mysql/)
-- [Git](https://git-scm.com/downloads)
-- [Docker](https://www.docker.com/) *(opcional)*
-
----
-
-## 📦 Instalação
-
-### Clonando o Repositório
+### Passos
 
 ```bash
-# Clonar repositório
-git clone https://github.com/SeuUser/CR-Server.git
+# 1. Clonar o repositório
+git clone https://github.com/JONATHANGABR/ClashRoyale-Server
+cd ClashServer
 
-# Entrar na pasta
-cd CR-Server
+# 2. Instalar dependências
+pip install -r requirements.txt
 
-⚙️ Configuração
-1. Configurar o banco de dados
+# 3. Configurar
+cp config.json.example config.json
+# Editar config.json com seu IP local
 
-# Entrar no MySQL
-mysql -u root -p
-
-# Criar usuário e banco
-CREATE DATABASE clashroyale;
-CREATE USER 'crserver'@'localhost' IDENTIFIED BY 'SuaSenha123';
-GRANT ALL PRIVILEGES ON clashroyale.* TO 'crserver'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-
-# Importar schema
-mysql -u crserver -p clashroyale < database/schema.sql
-
-2. Configurar o servidor
-
-Edite o arquivo config.json na raiz do projeto:
-
-JSON
-
-{
-  "Server": {
-    "Host": "0.0.0.0",
-    "Port": 9339,
-    "MaxPlayers": 1000,
-    "Maintenance": false,
-    "MaintenanceMessage": "Servidor em manutenção!"
-  },
-  "Database": {
-    "Host": "localhost",
-    "Port": 3306,
-    "Username": "crserver",
-    "Password": "SuaSenha123",
-    "Database": "clashroyale"
-  },
-  "Game": {
-    "Version": "3.2803.3",
-    "DefaultGold": 100000000,
-    "DefaultGems": 100000000,
-    "DefaultLevel": 1,
-    "MaxLevel": 14,
-    "DefaultTrophies": 0,
-    "AllCardsUnlocked": true
-  }
-}
+# 4. Rodar (precisa de root para porta 53)
+sudo python main.py
