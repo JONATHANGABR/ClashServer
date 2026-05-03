@@ -99,3 +99,51 @@ git clone https://github.com/SeuUser/CR-Server.git
 
 # Entrar na pasta
 cd CR-Server
+
+⚙️ Configuração
+1. Configurar o banco de dados
+
+# Entrar no MySQL
+mysql -u root -p
+
+# Criar usuário e banco
+CREATE DATABASE clashroyale;
+CREATE USER 'crserver'@'localhost' IDENTIFIED BY 'SuaSenha123';
+GRANT ALL PRIVILEGES ON clashroyale.* TO 'crserver'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+# Importar schema
+mysql -u crserver -p clashroyale < database/schema.sql
+
+2. Configurar o servidor
+
+Edite o arquivo config.json na raiz do projeto:
+
+JSON
+
+{
+  "Server": {
+    "Host": "0.0.0.0",
+    "Port": 9339,
+    "MaxPlayers": 1000,
+    "Maintenance": false,
+    "MaintenanceMessage": "Servidor em manutenção!"
+  },
+  "Database": {
+    "Host": "localhost",
+    "Port": 3306,
+    "Username": "crserver",
+    "Password": "SuaSenha123",
+    "Database": "clashroyale"
+  },
+  "Game": {
+    "Version": "3.2803.3",
+    "DefaultGold": 100000000,
+    "DefaultGems": 100000000,
+    "DefaultLevel": 1,
+    "MaxLevel": 14,
+    "DefaultTrophies": 0,
+    "AllCardsUnlocked": true
+  }
+}
