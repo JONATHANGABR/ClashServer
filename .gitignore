@@ -6,7 +6,10 @@ __pycache__/
 .Python
 venv/
 env/
+ENV/
 *.egg-info/
+dist/
+build/
 
 # Banco de dados
 *.db
@@ -15,22 +18,30 @@ env/
 
 # Logs
 *.log
+logs/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.sublime-*
 
-# Arquivos do APK original (não precisa subir)
-*.apk
-*.sc
-cr_extracted/
+# Sistema
+.DS_Store
+Thumbs.db
 
-# Dados sensíveis
+# Config local (não commitar)
 config.json
 
-# Cache de CSV processados (opcional)
-# Se quiser que outros extraiam os próprios CSV, comente as linhas abaixo
-# Assets/Csv/csv_logic/*.csv
-# Assets/Csv/csv_client/*.csv
+# Arquivos temporários
+temp/
+tmp/
+*.tmp
+
+# APK original/modificado (muito grande)
+*.apk
+*.jar
+cr_extracted/
+clash_temp/
+*-aligned-debugSigned.apk
