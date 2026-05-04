@@ -1,0 +1,15 @@
+{
+  "server_name": "ClashRoyaleServer",
+  "debug": true,
+
+  "host": "0.0.0.0",
+  "port": 9339,
+
+  "db_path": "royale.db",
+
+  "rc4_key": "fhsd6f86f678086fgfjdfjd789fhjf",
+
+  "dns_port": 5353,
+  "game_domain": "game.clashroyaleapp.com",
+  "your_server_ip": "100.64.0.1"
+}
